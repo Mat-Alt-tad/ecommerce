@@ -29,7 +29,7 @@ public class ProductoController {
         }
     }
 
-    @GetMapping("/todos")
+    @GetMapping("/")
     public ResponseEntity<List<Producto>> obtenerTodos() {
         try {
             List<Producto> productos = productoUseCase.obtenerTodosLosProductos();
@@ -52,8 +52,8 @@ public class ProductoController {
         }
     }
 
-    @GetMapping("/buscar/nombre/{nombre}")
-    public ResponseEntity<List<Producto>> buscarPorNombre(@PathVariable String nombre) {
+    @GetMapping("/buscar/nombre")
+    public ResponseEntity<List<Producto>> buscarPorNombre(@RequestParam String nombre) {
         try {
             List<Producto> productos = productoUseCase.buscarProductosPorNombre(nombre);
             return new ResponseEntity<>(productos, HttpStatus.OK);

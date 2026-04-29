@@ -1,6 +1,7 @@
 package com.ecommerce.auth.infrastructure.driver_adapters.jpa_repository;
 
 import com.ecommerce.auth.domain.model.Usuario;
+import com.ecommerce.auth.domain.model.gateway.EncrypterGateway;
 import com.ecommerce.auth.domain.model.gateway.UsuarioGateWay;
 import com.ecommerce.auth.infrastructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,8 @@ public class UsuarioDataGatewayImpl implements UsuarioGateWay {
 
     @Override
     public Usuario guardarUsuario(Usuario usuario) {
-        if(repository.existsById(usuario.getCedula())){
-            throw new RuntimeException("Ya existe un usuario con cedula: "+ usuario.getCedula());
+        if (repository.existsById(usuario.getCedula())) {
+            throw new RuntimeException("Ya existe un usuario con cedula: " + usuario.getCedula());
         }
         UsuarioData usuarioData = mapper.toUsuarioData(usuario);
         return mapper.toUsuario(repository.save(usuarioData));
@@ -38,11 +39,21 @@ public class UsuarioDataGatewayImpl implements UsuarioGateWay {
     }
 
     @Override
-    public Usuario actualizarUsuario(Usuario usuario){
-        if (!repository.existsById(usuario.getCedula())){
+    public Usuario actualizarUsuario(Usuario usuario) {
+        if (!repository.existsById(usuario.getCedula())) {
             throw new RuntimeException("No se puede Encontrar el usuario: " + usuario.getCedula());
         }
         UsuarioData usuarioData = mapper.toUsuarioData(usuario);
         return mapper.toUsuario(repository.save(usuarioData));
+    }
+
+    @Override
+    public Usuario login(String email, String password, EncrypterGateway encrypterGateway) {
+        UsuarioData usuarioData = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+        if (!encrypterGateway.matches(password, usuarioData.getPassword())) {
+            throw new RuntimeException("Credenciales incorrectas para el email: " + email);
+        }
+        return mapper.toUsuario(usuarioData);
     }
 }

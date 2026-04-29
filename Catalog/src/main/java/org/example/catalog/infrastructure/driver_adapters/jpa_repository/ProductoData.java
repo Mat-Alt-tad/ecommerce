@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ProductoData {
 
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     private String productoId;
 
