@@ -77,7 +77,7 @@ public class UsuarioController {
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

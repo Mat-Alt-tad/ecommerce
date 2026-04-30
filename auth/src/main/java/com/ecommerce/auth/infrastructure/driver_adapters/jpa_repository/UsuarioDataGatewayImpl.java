@@ -1,7 +1,6 @@
 package com.ecommerce.auth.infrastructure.driver_adapters.jpa_repository;
 
 import com.ecommerce.auth.domain.model.Usuario;
-import com.ecommerce.auth.domain.model.gateway.EncrypterGateway;
 import com.ecommerce.auth.domain.model.gateway.UsuarioGateWay;
 import com.ecommerce.auth.infrastructure.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +47,9 @@ public class UsuarioDataGatewayImpl implements UsuarioGateWay {
     }
 
     @Override
-    public Usuario login(String email, String password, EncrypterGateway encrypterGateway) {
-        UsuarioData usuarioData = repository.findByEmail(email)
+    public Usuario buscarUsuarioPorEmail(String email) {
+        return repository.findByEmail(email)
+                .map(mapper::toUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
-        if (!encrypterGateway.matches(password, usuarioData.getPassword())) {
-            throw new RuntimeException("Credenciales incorrectas para el email: " + email);
-        }
-        return mapper.toUsuario(usuarioData);
     }
 }

@@ -21,12 +21,11 @@ public class UsuarioUseCase {
 
     public Usuario buscarUsuarioPorCedula(String cedula) {
         try {
-            usuarioGateWay.buscarUsuarioPorCedula(cedula);
+            return usuarioGateWay.buscarUsuarioPorCedula(cedula);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new Usuario();
         }
-        return usuarioGateWay.buscarUsuarioPorCedula(cedula);
     }
 
     public void eliminarUsuarioPorCedula(String cedula) {
@@ -51,11 +50,10 @@ public class UsuarioUseCase {
         if (email == null || password == null) {
             throw new NullPointerException("el correo o password no puede ser nulo - login");
         }
-        try {
-            return usuarioGateWay.login(email, password, encrypterGateway);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e.getMessage());
+        Usuario usuario = usuarioGateWay.buscarUsuarioPorEmail(email);
+        if (!encrypterGateway.matches(password, usuario.getPassword())) {
+            throw new RuntimeException("Credenciales incorrectas para el email: " + email);
         }
+        return usuario;
     }
 }
